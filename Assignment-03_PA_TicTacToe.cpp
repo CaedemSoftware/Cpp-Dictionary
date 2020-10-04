@@ -3,8 +3,6 @@ using namespace std;
 
 bool isWon(char symbol, char board[][3])
 {
-	// NOTE: i am sure this can be  improved upon but i just wanted to get something working for now. please change if you find a better way to do it. maybe loops?
-
 	// checks for matching symbols
 	if ((board[0][0] == symbol && board[0][1] == symbol && board[0][2] == symbol) || (board[0][0] == symbol && board[1][0] == symbol && board[2][0] == symbol)) { // checks first column (left) and first row (top)
 		return true;   // if 3 symbols match, returns true to end the While loop in main, ending the game
