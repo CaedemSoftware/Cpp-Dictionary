@@ -1,8 +1,37 @@
-#include <string>
-#include <vector>
 #include <iostream>
+#include <vector>
+#include <iomanip>
+#include <sstream>
 using namespace std;
-bool isvalidcc(const string&);
+
+int doubleF(int num) {
+	num = 2 * num;
+	if (num > 9) {
+		int tens = num / 10;
+		int ones = num % 10;
+		num = tens + ones;
+	}
+	return num;
+}
+
+bool isvalidcc(const string& card) 
+{
+	
+	int sum = 0;
+	int oddIt = card.size() - 1;
+	int evenIt = oddIt - 1;
+	while (evenIt >= 0) {
+		int evenNum = card[evenIt] - '0';
+		sum += (doubleF(evenNum));
+		evenIt = evenIt - 2;
+	}
+	while (oddIt >= 0) {
+		int oddNum = card[oddIt] - '0';
+		sum += oddNum;
+		oddIt = oddIt - 2;
+	}
+	return !(sum % 10);
+}
 
 int main()
 {
@@ -24,16 +53,10 @@ int main()
 	vector<string>::iterator itr;
 
 	for (i = 1, itr = cardnumbers.begin(); itr != cardnumbers.end(); ++itr, i++) {
-//		cout << setw(2)  << i << " " 
-//			 << setw(17) << *itr 
-//			 << ((isvalidcc(*itr)) ? " is valid" : " is not valid") << endl;
+		cout << setw(2) << i << " "
+			<< setw(17) << *itr
+			<< ((isvalidcc(*itr)) ? " is valid" : " is not valid") << endl;
 	}
 
 	return 0;
-}
-
-string setw(int some) 
-{
-	return "";
-	//do something
 }
