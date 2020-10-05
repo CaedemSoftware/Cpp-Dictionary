@@ -4,7 +4,7 @@
 #include <sstream>
 using namespace std;
 
-int doubleF(int num) {
+int doubleEven(int num) {
 	num = 2 * num;
 	if (num > 9) {
 		int tens = num / 10;
@@ -16,13 +16,12 @@ int doubleF(int num) {
 
 bool isvalidcc(const string& card) 
 {
-	
 	int sum = 0;
-	int oddIt = card.size() - 1;
+	int oddIt = card.size() - 1;//last number is digit 1
 	int evenIt = oddIt - 1;
 	while (evenIt >= 0) {
-		int evenNum = card[evenIt] - '0';
-		sum += (doubleF(evenNum));
+		int evenNum = card[evenIt] - '0';//casting gives ascii value
+		sum += (doubleEven(evenNum));
 		evenIt = evenIt - 2;
 	}
 	while (oddIt >= 0) {
@@ -30,7 +29,7 @@ bool isvalidcc(const string& card)
 		sum += oddNum;
 		oddIt = oddIt - 2;
 	}
-	return !(sum % 10);
+	return !(sum % 10);//returns true if no remainder
 }
 
 int main()
