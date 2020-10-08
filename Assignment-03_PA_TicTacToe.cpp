@@ -27,11 +27,11 @@ bool isDraw(char board[][3])
 	for (int row = 0; row < 3; row++) {
 		for (int column = 0; column < 3; column++) {
 			if (board[row][column] == ' ') {
-				return false;
+				return false;//false when any blanks are detected
 			}
 		}
 	}
-	return true;
+	return true;//true when no blanks detected
 }
 
 void displayBoard(char board[][3])
@@ -63,8 +63,7 @@ void makeAMove(char board[][3], char symbol)
 	}
 	if (board[rowIndex][columnIndex] == ' ') {
 		board[rowIndex][columnIndex] = symbol;
-	}
-	else {
+	} else {
 		cout << "This cell is already occupied. Try a different cell" << endl;
 		makeAMove(board, symbol);
 	}
