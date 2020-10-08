@@ -49,7 +49,7 @@ int main()
         
         while (!correctFilePath) {
             cout << "<!>Enter the CORRECT data file path:  " << endl;
-            cin >> filePath; 
+            filePath = realPath; // change this to "cin >> filepath;" whenever we're done 
             if (filePath == realPath) { // if the user's input (filepath) is equivalent to the path we want (realpath, which is: ./Data.CS.SFSU.txt, then we proceed"
                 correctFilePath = true;
             }
