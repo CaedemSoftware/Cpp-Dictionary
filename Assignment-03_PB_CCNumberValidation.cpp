@@ -16,6 +16,9 @@ int doubleEven(int num) {
 
 bool isvalidcc(const string& card) 
 {
+	if (card.size() < 13 || card.size() > 16) {
+		return false;
+	}
 	int sum = 0;
 	int oddIt = card.size() - 1;//last number is digit 1
 	int evenIt = oddIt - 1;
