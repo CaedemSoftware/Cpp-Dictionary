@@ -4,14 +4,27 @@
 using namespace std;
 
 
-int main()
+void main()
 {
 
-    string test = "rona ligma SPLIT lmao rona ";
-    string delimiter = "SPLIT";
-    string token1 = test.substr(0, test.find(delimiter));
-    string token2 = test.substr(test.find(delimiter) + delimiter.size() + 1, test.length());
-    cout << token1 << endl;
-    cout << token2 << endl;
-    return 0;
+    /*string test = "| rona ligma | lmao rona | balls rona";
+    string delimiter = "|";
+    while (true) {
+        string test = test.substr(test.find(delimiter) + delimiter.size() + 1, test.find_last_of(delimiter));
+        cout << test << endl;
+    }
+    return;
+    */
+    //needed split to loop
+    std::string s = "arrow|noun -=>> Here is one arrow: <IMG> -=>> </IMG>..   \nbook | noun -=> > A set of pages. | verb -=> > To arrange something on a particular date. | verb -=> > to arrange for someone to have a seat on a plane. | noun -=> > A written work published in printed or electronic form. ";
+    std::string delimiter = "|";
+
+    size_t pos = 0;
+    std::string token;
+    while ((pos = s.find(delimiter)) != std::string::npos) {
+        token = s.substr(0, pos);
+        std::cout << token << std::endl;
+        s.erase(0, pos + delimiter.length());
+    }
+    std::cout << "not in token:" << s << std::endl;
 }
