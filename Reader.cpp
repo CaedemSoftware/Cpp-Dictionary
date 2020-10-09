@@ -5,7 +5,7 @@ using namespace std;
 
 
 
-int main()
+void read()
 {
     ifstream reader("Data.CS.SFSU.txt");
     string a;
@@ -14,5 +14,5 @@ int main()
         cout << a << endl;
     }
     reader.close();
-    return 0;
+    return;
 }
