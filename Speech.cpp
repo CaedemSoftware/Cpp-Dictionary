@@ -3,7 +3,7 @@
 using namespace std;
 
 
-class Word {
+class Speech {
 private:
     string name;
     string speech;
@@ -12,6 +12,12 @@ private:
     //[verb, defa, defb]
 
 public:
+    Speech() {
+
+    }
+    Speech(const Speech& original) {
+        name = original.name;
+    }
     string getName() {
         return name;
     }
@@ -31,7 +37,7 @@ public:
         return definitions;
     }
 
-    void setDefinition(string v) {
+    void addDefinition(string v) {
         definitions.push_back(v);
     }
 
