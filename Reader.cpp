@@ -4,7 +4,7 @@
 #include <cstring>
 using namespace std;
 
-
+// I DON'T KNOW WHY BUT IT FUCKING PRINTS OUT THE PART OF SPEECH AFTER EVERYTHING AND I HATE IT
 
 void read()
 {  
@@ -40,7 +40,12 @@ void read()
                 }
                 str.erase(0, pos + innerDelimiter.length()); 
                 // ^ due to how this loop works, it grabs both speech and definition. we could just easily slap this into a data structure then destroy index 0 to only keep definitons
+                if ((str.find("<IMG>") != string::npos) == 1) {
+                    break;
+                }
+                // ^ makes exception for arrow
                 cout << innerToken << endl;
+
             }
             counter = 0;
         }
