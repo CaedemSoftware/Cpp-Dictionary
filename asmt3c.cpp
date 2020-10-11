@@ -93,7 +93,7 @@ vector<Speech> readSource(string dataLocation)
 				//cout << "Def: " << newEntry.getDefinitions().back() << endl;
 			}
 			if ((pos = str.find(innerDelimiter)) != string::npos) {// if -=>> has a position inside the string, do this
-				speech = str.substr(0, pos);//part of speech
+				speech = str.substr(0, pos - 1);//part of speech
 
 				//if speech is the same then do nothing
 				//if part of speech is different then make a copy of Speech object
