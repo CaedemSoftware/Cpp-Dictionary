@@ -172,15 +172,24 @@ int main()
 	}
 	
 	multimap<string, Speech> dictionary;
+	int numKeywords = 0;
+	int numDefinitions = 0;
+	string temp;
 	for (vector<Speech> :: iterator it = source.begin(); it != source.end(); it++) {
+		
 		Speech current = *it;
+		numDefinitions += current.getDefinitions().size();
 		dictionary.emplace(current.getName(), current);
+		if (current.getName() != temp) {
+			numKeywords++;
+		}
+		temp = current.getName();
 	}
-	cout << "book: " << dictionary.count("book") << endl;
+	//dicionary.find(keyword) returns an iterator with associated values
 
 	cout << "====== DICTIONARY 340 C++ ====="
-		<< "\n------Keywords: " //19
-		<< "\n------Definitions: " << "\n" << endl;//61
+		<< "\n------Keywords: " << numKeywords //19
+		<< "\n------Definitions: " << numDefinitions << "\n" << endl;//61
 	int searchCount = 1;
 	while (true) {
 		string searchKey;
