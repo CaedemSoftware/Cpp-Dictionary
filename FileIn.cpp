@@ -6,7 +6,7 @@
 #include "Speech.cpp"
 using namespace std;
 
-int notmain()//vector<Speech> readSource(string dataLocation)
+int main()//vector<Speech> readSource(string dataLocation)
 {
 	ifstream reader("./Data.CS.SFSU.txt");//opens file
 
@@ -41,8 +41,9 @@ int notmain()//vector<Speech> readSource(string dataLocation)
 				newWord = false;
 			}
 			else {
-				cout << "Def: " << outerToken << endl;//Speech.addDef(outerToken);
+				//cout << "Def: " << outerToken << endl;//Speech.addDef(outerToken);
 				newEntry.addDefinition(outerToken);
+				cout << "Def: " << newEntry.getDefinitions().back() << endl;
 			}
 			if ((pos = str.find(innerDelimiter)) != string::npos) {// if -=>> has a position inside the string, do this
 				speech = str.substr(0, pos);//part of speech
@@ -77,11 +78,12 @@ int notmain()//vector<Speech> readSource(string dataLocation)
 				lastSpeech = speech;
 			}//end if arrow
 		}//end inner loop
-		cout << "Def: " << str << endl << endl; // this loop always skips out on the last definition but adding this here fixes that. double endl for formatting output
+		//cout << "Def: " << str << endl << endl; // this loop always skips out on the last definition but adding this here fixes that. double endl for formatting output
 		newEntry.addDefinition(str);
+		cout << "Def: " << newEntry.getDefinitions().back() << endl << endl;
 		source.push_back(newEntry);
 	}//end outer while loop
 
 	reader.close();//closes file
-	return 0;
+	return 0;//return source
 }
