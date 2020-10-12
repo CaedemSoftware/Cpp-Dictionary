@@ -81,6 +81,7 @@ vector<Speech> readSource(string dataLocation)
 		speech = { "" };
 		while ((pos = str.find(outerDelimiter)) != string::npos) { // while | has a position inside the string, do this
 			outerToken = str.substr(0, pos);//speech + def
+			outerToken[0] = toupper(outerToken[0]); // changes first letter to uppercase
 			str.erase(0, pos + outerDelimiter.length());//erase what we've already used
 			if (newWord) {
 				//cout << "Keyword: " << outerToken << endl;//Speech.setName(outerToken);
@@ -94,14 +95,14 @@ vector<Speech> readSource(string dataLocation)
 			}
 			if ((pos = str.find(innerDelimiter)) != string::npos) {// if -=>> has a position inside the string, do this
 				speech = str.substr(0, pos - 1);//part of speech
-
+				speech[0] = toupper(speech[0]); // changes first letter to uppercase
 				//if speech is the same then do nothing
 				//if part of speech is different then make a copy of Speech object
 				//same name, different definitions
 				//edge case: noun verb noun (e.g. book)
 
 				//keyword -> speech -> def
-				if ((speech != lastSpeech) && speechSet) {
+				if (speechSet) { //previously ((speech != lastSpeech) && speechSet) changed to allow proper printing
 					//can't do this if part of speech hasn't been set yet
 					Speech temp;
 					temp.copyName(newEntry);
@@ -154,7 +155,7 @@ int main()
 			<< "<!>ERROR<!> ===> Provided file path: C:\\Users\\MickeyMouse\\AbsolutePath\\DB\\Data.CS.SFSU.txt\n"
 			<< "<!>Enter the CORRECT data file path: ./Data.CS.SFSU.txt" << endl;
 	}
-	
+
 	bool fileOpen = false;
 	vector<Speech> source;
 	while (!fileOpen) {
@@ -164,19 +165,20 @@ int main()
 			source = readSource(relativePath);
 			fileOpen = true;
 			//close file
-			
+
 		}
 		catch (...) {
 			cout << "Something went wrong" << endl;
 		}
 	}
-	
+
 	multimap<string, Speech> dictionary;
+	multimap<string, Speech>::iterator it;
 	int numKeywords = 0;
 	int numDefinitions = 0;
 	string temp;
-	for (vector<Speech> :: iterator it = source.begin(); it != source.end(); it++) {
-		
+	for (vector<Speech> ::iterator it = source.begin(); it != source.end(); it++) {
+
 		Speech current = *it;
 		numDefinitions += current.getDefinitions().size();
 		dictionary.emplace(current.getName(), current);
@@ -191,11 +193,31 @@ int main()
 		<< "\n------Keywords: " << numKeywords //19
 		<< "\n------Definitions: " << numDefinitions << "\n" << endl;//61
 	int searchCount = 1;
+	
+	// reminder to do uppercase and stuff later
 	while (true) {
 		string searchKey;
+		string testing;
 		cout << "Search [" << searchCount << "]: ";
 		cin >> searchKey;
 		searchCount++;
+		for (it = dictionary.begin(); it != dictionary.end(); ++it) {
+			string grammarFixForDictionary = (it->first);
+			// NOTE: unfinished, was trying to turn everything to lowercase here
+
+			//for (int i = 0; i < grammarFixForDictionary.size(); i++) {
+				//grammarFixForDictionary[i] = tolower(grammarFixForDictionary[i]);
+			//}
+			
+			if (grammarFixForDictionary == searchKey) {
+				cout << searchKey << " [" << it->second.getSpeech() << "] : " << it->second.getDefinitions()[0] << endl;
+				
+				// compareTo? can use stuff like a < b in terms of ascii value to actually determine alphabetical priority
+			}
+			/*cout << "Keyword: " << it->first << endl;
+			cout << "Part of Speech: " << it->second.getSpeech() << endl;
+			cout << "Definitions?: " << it->second.getDefinitions()[0] << endl;*/
+		}
 		if (searchCount > 2) {
 			break;
 		}
