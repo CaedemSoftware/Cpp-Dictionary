@@ -139,6 +139,13 @@ int compareSpeech(Speech a, Speech b) {
 	return a.getSpeech() < b.getSpeech();
 }
 
+void displayHowTo() {
+	cout << "    |\n" << "    PARAMETER HOW-TO, please enter:\n"
+		<< "    1. A search key - then 2. An optional part of speech - then" << endl
+		<< "    3. An optional 'distinct' - then 4. An optional 'reverse'" << endl
+		<< "    |\n";
+}
+
 int main()
 {
 
@@ -174,7 +181,7 @@ int main()
 			cout << "Something went wrong" << endl;
 		}
 	}
-	
+
 	multimap<string, Speech> dictionary;
 	multimap<string, Speech>::iterator it;
 	int numKeywords = 0;
@@ -212,13 +219,15 @@ int main()
 		for (int i = 0; i < searchKey.size(); i++) {
 			searchKey[i] = tolower(searchKey[i]);
 		}
+		if (searchKey == "!help") {
+			displayHowTo();
+			continue;
+		}
 		int charsUpper = 1;
-		if (searchKey.find("csc") != string::npos) {
+		/*if (searchKey.find("csc") != string::npos) {
 			charsUpper = 3;
-		}
-		for (int i = 0; i < charsUpper; i++) {
-			searchKey[i] = toupper(searchKey[i]);
-		}
+		}*/
+		searchKey[0] = toupper(searchKey[0]);
 		cout << "    |" << endl;
 		for (it = dictionary.begin(); it != dictionary.end(); ++it) {
 			string grammarFixForDictionary = (it->first);
