@@ -1,0 +1,283 @@
+#include <iostream>
+#include <vector>
+#include <iomanip>
+#include <sstream>
+#include <fstream>
+#include <map>
+#include <algorithm>
+using namespace std;
+
+class Speech {
+private:
+	string name;
+	string speech;
+	vector<string> definitions;
+	//[noun, def1, def2]
+	//[verb, defa, defb]
+
+public:
+	Speech() {
+
+	}
+	Speech(const Speech& original) {
+		name = original.name;
+		speech = original.speech;
+		definitions = original.definitions;
+	}
+	string getName() {
+		return name;
+	}
+
+	void setName(string s) {
+		name = s;
+	}
+
+	void copyName(Speech original) {
+		name = original.getName();
+	}
+
+	string getSpeech() {
+		return speech;
+	}
+
+	void setSpeech(string s) {
+		speech = s;
+	}
+	vector<string> getDefinitions() {
+		return definitions;
+	}
+
+	void setDefinitions(vector<string> copy) {
+		definitions = copy;
+	}
+
+	void addDefinition(string v) {
+		definitions.push_back(v);
+	}
+};
+
+vector<Speech> readSource(string dataLocation)
+{
+	ifstream reader(dataLocation);//open relative path
+
+	string str;
+	string outerDelimiter = "|";
+	string innerDelimiter = "-=>>";
+	size_t pos = 0;//position
+	string outerToken;
+	string speech;
+	string lastSpeech;
+	bool newWord;;
+	bool speechSet;
+	vector<Speech> source;
+	vector<string> myVector;
+
+	cout << "! Loading data..." << endl;
+	while (getline(reader, str)) { // this iterates through every line in the text file and turns it into a string 'str'
+		//every word has a \n
+		newWord = true;
+		speechSet = false;
+		Speech newEntry;
+		speech = { "" };
+		while ((pos = str.find(outerDelimiter)) != string::npos) { // while | has a position inside the string, do this
+			outerToken = str.substr(0, pos);//speech + def
+			outerToken[0] = toupper(outerToken[0]); // changes first letter to uppercase
+			str.erase(0, pos + outerDelimiter.length());//erase what we've already used
+			if (newWord) {
+				newEntry.setName(outerToken);
+
+				newWord = false;
+			}
+			else {
+				outerToken[0] = toupper(outerToken[0]);
+				newEntry.addDefinition(outerToken);
+			}
+			if ((pos = str.find(innerDelimiter)) != string::npos) {// if -=>> has a position inside the string, do this
+				speech = str.substr(0, pos - 1);//part of speech
+				speech[0] = toupper(speech[0]); //changes first letter to uppercase
+
+				//keyword -> speech -> def
+				if ((speech != lastSpeech) && speechSet) {
+					Speech temp;
+					temp.copyName(newEntry);
+					myVector = newEntry.getDefinitions();
+					sort(myVector.begin(), myVector.end());//couldn't sort with getDefinitions
+					newEntry.setDefinitions(myVector);
+					source.push_back(newEntry);//add object to data source
+					newEntry = temp;//working with blank Speech object
+					newEntry.setSpeech(speech);
+				}
+				if (!speechSet) {
+					newEntry.setSpeech(speech);
+					speechSet = true;
+				}
+				str.erase(0, pos + innerDelimiter.size() + 1);//remove part of speech from str
+				if (str.find("<IMG>") != string::npos) {
+					break;//moves onto next word
+					//works for the assignment but not the behavior we really want
+				}//exception for images
+				lastSpeech = speech;
+			}//end if arrow
+		}//end inner loop
+		newEntry.addDefinition(str);//remainder of line
+		myVector = newEntry.getDefinitions();
+		sort((myVector.begin()), (myVector.end()));
+		newEntry.setDefinitions(myVector);
+		source.push_back(newEntry);
+	}//end outer while loop
+	cout << "! Loading completed..." << endl;
+	cout << "! Closing data file... " << dataLocation << "\n" << endl;
+	reader.close();//closes file
+	return source;
+}
+
+int compareSpeech(Speech a, Speech b) {//used to sort data source
+	return a.getSpeech() < b.getSpeech();
+}
+
+void displayHowTo() {
+	cout << "    |\n" << "    PARAMETER HOW-TO, please enter:\n"
+		<< "    1. A search key - then 2. An optional part of speech - then" << endl
+		<< "    3. An optional 'distinct' - then 4. An optional 'reverse'" << endl;
+}
+
+void displayNotFound() {
+	cout << "    <NOT FOUND> To be considered for the next release. Thank you." << endl
+		<< "    |" << endl;;
+}
+
+int main()
+{
+
+	string absolutePath = "C:\\Users\\MickeyMouse\\AbsolutePath\\DB\\Data.CS.SFSU.txt\n";
+	string relativePath = "./Data.CS.SFSU.txt"; // string that is what we want the user to input
+	cout << "! Opening data file... " << absolutePath;
+	try {
+		//open absolute path
+		ifstream reader(absolutePath); // syntax: ifStream name(string). it reads the string on the inside to see if it is a valid data file to read, which it then opens
+		if (!reader.is_open()) { //  if the stream did not open a valid data file, like if its name is incorrect, throw an invalid argument
+			throw std::invalid_argument("incorrect file path");
+		}
+
+	}
+	catch (...) {
+		cout << "<!>ERROR<!> ===> File could not be opened.\n"
+			<< "<!>ERROR<!> ===> Provided file path: C:\\Users\\MickeyMouse\\AbsolutePath\\DB\\Data.CS.SFSU.txt\n"
+			<< "<!>Enter the CORRECT data file path: ./Data.CS.SFSU.txt" << endl;
+	}
+
+	bool fileOpen = false;
+	vector<Speech> source;
+	while (!fileOpen) {
+		try {
+
+			//load data
+			source = readSource(relativePath);
+			fileOpen = true;
+			//close file
+
+		}
+		catch (...) {
+			cout << "The file is not in the current directory" << endl;
+		}
+	}
+
+	multimap<string, Speech> dictionary;
+	multimap<string, Speech>::iterator it;
+	int numKeywords = 0;
+	int numDefinitions = 0;
+	string temp;
+	for (vector<Speech> ::iterator it = source.begin(); it != source.end(); it++) {
+		Speech current = *it;
+		numDefinitions += current.getDefinitions().size();
+		if (current.getName() != temp) {
+			numKeywords++;//counting method only works when sorted alphbetically by key
+		}
+		temp = current.getName();
+	}
+	sort(source.begin(), source.end(), compareSpeech);//alphabetical by part of speech
+	for (vector<Speech> ::iterator it = source.begin(); it != source.end(); it++) {
+
+		Speech current = *it;
+		dictionary.emplace(current.getName(), current);
+	}
+	//dicionary.find(keyword) returns an iterator with associated values
+
+	cout << "====== DICTIONARY 340 C++ ====="
+		<< "\n------ Keywords: " << numKeywords //19
+		<< "\n------ Definitions: " << numDefinitions << "\n" << endl;//61
+	int searchCount = 1;
+	bool distinctBool = true;
+	bool reverseBool = true;
+	bool found = false;
+	string out;
+
+	while (true) {
+		string searchKey;
+		string testing;
+		cout << "Search [" << searchCount << "]: ";
+		getline(cin, searchKey);
+		searchCount++;
+		if (searchKey.empty()) {
+			searchKey = "!help";
+		}
+		for (size_t i = 0; i < searchKey.size(); i++) {
+			searchKey[i] = tolower(searchKey[i]);
+		}
+		if (searchKey == "!q" || searchKey == "quit") {
+			break;
+		}
+		if (searchKey == "!help") {
+			displayHowTo();
+			cout << "    |" << endl;
+			continue;
+		}
+		searchKey[0] = toupper(searchKey[0]);
+		temp = searchKey;
+		if (searchKey.find("Csc") != string::npos) {//csc edge case
+			temp = "CSC" + searchKey.substr(3, searchKey.size());
+		}
+		cout << "    |" << endl;
+		string lastSpeech = { "" };
+		vector<string> usedDef;
+		for (it = dictionary.begin(); it != dictionary.end(); ++it) {
+			string mapKey = (it->first);
+			// NOTE: unfinished, was trying to turn everything to lowercase here
+
+			//for (int i = 0; i < grammarFixForDictionary.size(); i++) {
+				//grammarFixForDictionary[i] = tolower(grammarFixForDictionary[i]);
+			//}
+
+			if (mapKey == searchKey) {//use a list
+				//output -> list -> print
+				//reverse and unique
+
+				//if part of speech doesn't match, continue
+				found = true;
+				if (it->second.getSpeech() != lastSpeech) {//only considering definitions with same part of speech
+					usedDef.clear();
+				}
+				for (size_t i = 0; i < it->second.getDefinitions().size(); i++) {
+					if (distinctBool && (it->second.getSpeech() == lastSpeech) && (find(usedDef.begin(), usedDef.end(), it->second.getDefinitions()[i]) != usedDef.end())) {
+						continue;
+					}
+					out = "    " + temp + " [" + it->second.getSpeech() + "] : " + it->second.getDefinitions()[i];
+					lastSpeech = it->second.getSpeech();
+					usedDef.push_back(it->second.getDefinitions()[i]);
+					cout << out << endl;
+				}
+				
+			}
+			/*cout << "Keyword: " << it->first << endl;
+			cout << "Part of Speech: " << it->second.getSpeech() << endl;
+			cout << "Definitions?: " << it->second.getDefinitions()[0] << endl;*/
+		}//end print definitions
+		if (!found) {
+			displayNotFound();
+			displayHowTo();
+		}
+		cout << "    |" << endl;
+	}
+	cout << "\n-----THANK YOU-----" << endl;
+	return 0;
+}
