@@ -296,19 +296,24 @@ int main()
 		vector<string> inputVec = splitter(input, " ");
 		searchCount++;
 		string searchKey;
+		vector<string>::iterator remover;
 		if (inputVec.empty()) {//enter key edge case
 			searchKey = "!help";
 		}
 		else {
 			searchKey = inputVec[0];
 			while (searchKey.empty()) {//deletes spaces before first word
-				vector<string>::iterator remover = inputVec.begin();
+				remover = inputVec.begin();
 				inputVec.erase(remover);
 				searchKey = inputVec[0];
 			}//end while
 		}
 		if (searchKey == "!q" || searchKey == "quit") {//end program
 			break;
+		}
+		while (find(inputVec.begin(), inputVec.end(), "") != inputVec.end()) {//remove blank spaces in inputVec
+			remover = find(inputVec.begin(), inputVec.end(), "");
+			inputVec.erase(remover);
 		}
 		if (inputVec.size() > 4) {
 			displayHowTo();
