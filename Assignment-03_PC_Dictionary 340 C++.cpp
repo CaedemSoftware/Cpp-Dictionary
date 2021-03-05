@@ -341,20 +341,18 @@ int main()
 			temp = "CSC" + searchKey.substr(3, searchKey.size());
 		}
 		cout << "    |" << endl;
-		string lastSpeech = { "" };
-		vector<string> usedDef;
+		//string lastSpeech = { "" };
+		//vector<string> usedDef;
 
 		//using map below
 		//some code left in comments, alternatives to list approach
-		for (mapIt = dictionary.begin(); mapIt != dictionary.end(); ++mapIt) {//iterates speech objects
+		pair<multimap<string, Speech>::iterator, multimap<string, Speech>::iterator> range = dictionary.equal_range(searchKey);//finds values matching the key
+		for (mapIt = range.first; mapIt != range.second; ++mapIt) {
 			string mapKey = mapIt->first;
 			string mapSpeech = mapIt->second.getSpeech();
-			if (mapKey == searchKey) {
-				
-				if (!partOfSpeech.empty()) {
-					if (mapSpeech != partOfSpeech) {//if part of speech doesn't match, continue
+
+				if (!partOfSpeech.empty() && mapSpeech != partOfSpeech) {//if part of speech doesn't match, continue
 						continue;//next speech object
-					}
 				}
 				found = true;//true when part of speech matches at least once
 				//if (mapIt->second.getSpeech() != lastSpeech) {//only considering definitions with same part of speech
@@ -366,8 +364,8 @@ int main()
 					//	continue;
 					//}//distinct implementation hindered by constraints of Speech class
 					out = "    " + temp + " [" + mapSpeech + "] : " + mapIt->second.getDefinitions()[i];
-					lastSpeech = mapSpeech;
-					usedDef.push_back(mapIt->second.getDefinitions()[i]);
+					//lastSpeech = mapSpeech;
+					//usedDef.push_back(mapIt->second.getDefinitions()[i]);
 					fixitFelix.push_back(out);
 					/*if (!reverseBool) {
 						cout << out << endl;
@@ -378,7 +376,6 @@ int main()
 
 				}//end definitions loop
 
-			}//end if key matches
 		}//end search for keys
 		fixitFelix.sort();
 		if (distinctBool) {
